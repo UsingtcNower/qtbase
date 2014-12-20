@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
@@ -1481,9 +1481,12 @@ bool QItemSelectionModel::isColumnSelected(int column, const QModelIndex &parent
         joined += d->currentSelection;
     int rowCount = d->model->rowCount(parent);
     for (int row = 0; row < rowCount; ++row) {
+         Qt::ItemFlags flags = d->model->index(row, column, parent).flags();
+         if (!flags.testFlag(Qt::ItemIsSelectable)) {
+             continue; // ignore the unselectable items
+         }
          for (it = joined.constBegin(); it != joined.constEnd(); ++it) {
              if ((*it).contains(row, column, parent)) {
-                 Qt::ItemFlags flags = d->model->index(row, column, parent).flags();
                  if ((flags & Qt::ItemIsSelectable) && (flags & Qt::ItemIsEnabled)) {
                      row = qMax(row, (*it).bottom());
                      break;
